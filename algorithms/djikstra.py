@@ -4,13 +4,13 @@ import math
 
 
 def _initialize_data(graph, start_node):
-    processes = []
+    processed = []
     costs = {}
     parents = {}
-    for parent in graph:
-        costs[parent] = math.inf
+    for node in graph:
+        costs[node] = math.inf
     costs[start_node] = 0
-    return costs, parents, processes
+    return costs, parents, processed
 
 
 def _find_next_node_to_check(costs, processed):
@@ -18,7 +18,7 @@ def _find_next_node_to_check(costs, processed):
     node_with_lowest_cost = None
 
     for node in costs:
-        if costs[node] < lowest_cost and node not in processed:
+        if node not in processed and costs[node] < lowest_cost:
             lowest_cost = costs[node]
             node_with_lowest_cost = node
     return node_with_lowest_cost
@@ -31,10 +31,11 @@ def find_shortest_path(graph, start_node, finish_node):
     # starting ...
     node = _find_next_node_to_check(costs, processed)
     while node:
-        neighbours = graph[node]
-        for n in neighbours.keys():
-            if costs[n] > costs[node] + neighbours[n]:
-                costs[n] = neighbours[n] + costs[node]
+        node_neighbours = graph[node]
+        for n in node_neighbours.keys():
+            current_cost_for_neighbour = costs[node] + node_neighbours[n]
+            if costs[n] > current_cost_for_neighbour:
+                costs[n] = current_cost_for_neighbour
                 parents[n] = node
         processed.append(node)
         node = _find_next_node_to_check(costs, processed)
